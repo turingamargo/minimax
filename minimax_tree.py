@@ -1,37 +1,34 @@
 from __future__ import annotations
 
-import random
-
 
 class MiniMaxNode:
     left_node: MiniMaxNode | None
     right_node: MiniMaxNode | None
     value: int | None
 
-    def __init__(self, value: int | None = None, left_node: MiniMaxNode | None = None,
-                 right_node: MiniMaxNode | None = None) -> None:
+    def __init__(self, value=None, left_node=None, right_node=None):
         self.value = value
         self.left_node = left_node
         self.right_node = right_node
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return str(self.value)
 
 
 class MiniMaxTree:
     root: MiniMaxNode
-    leaves: [int]
+    values: [int]
 
     @staticmethod
     def is_power_of_two(n):
         return (n & (n - 1) == 0) and n != 0
 
-    def __init__(self, number_of_children: int) -> None:
-        if not MiniMaxTree.is_power_of_two(number_of_children):
+    def __init__(self, values):
+        if not MiniMaxTree.is_power_of_two(len(values)):
             raise ValueError(f"Number of children is not a power of two")
 
-        self.leaves = random.sample(range(number_of_children), number_of_children)
-        nodes = [MiniMaxNode(value) for value in self.leaves]
+        self.values = values
+        nodes = [MiniMaxNode(value) for value in self.values]
 
         while len(nodes) != 1:
             new_nodes = []
@@ -58,11 +55,18 @@ def minimax_recursive_solver(root: MiniMaxNode, maximize: bool):
 
     if maximize:
         return max(
-            minimax_recursive_solver(root=root.left_node, maximize=False),
-            minimax_recursive_solver(root=root.right_node, maximize=False)
+            minimax_recursive_solver(root=left_node, maximize=False),
+            minimax_recursive_solver(root=right_node, maximize=False)
         )
     else:
         return min(
-            minimax_recursive_solver(root=root.left_node, maximize=True),
-            minimax_recursive_solver(root=root.right_node, maximize=True)
+            minimax_recursive_solver(root=left_node, maximize=True),
+            minimax_recursive_solver(root=right_node, maximize=True)
         )
+
+
+if __name__ == "__main__":
+    test_values = [7, 5, 3, 2, 4, 1, 0, 6]
+    tree = MiniMaxTree(values=test_values)
+    max_value = minimax_recursive_solver(root=tree.root, maximize=True)
+    print(max_value)
